@@ -1,0 +1,25 @@
+## Create GKE clusters
+##      gcloud container clusters create [cluster's name] \
+##      --machine-type=[size for GKE's nodes VM] \
+##      --num-nodes 1 \
+##      --zone [GCP's zone]
+
+gcloud container clusters create yugabytedb-sg \
+--machine-type=n1-standard-8 \
+--num-nodes 1 \
+--zone asia-southeast1-c
+
+gcloud container clusters create yugabytedb-au \
+--machine-type=n1-standard-8 \
+--num-nodes 1 \
+--zone australia-southeast1-b
+
+gcloud container clusters create yugabytedb-tyo \
+--machine-type=n1-standard-8 \
+--num-nodes 1 \
+--zone asia-northeast1-a
+
+gcloud container clusters create yugabytedb-osa \
+--machine-type=n1-standard-8 \
+--num-nodes 1 \
+--zone asia-northeast2-a
