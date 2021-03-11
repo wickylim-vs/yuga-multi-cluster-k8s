@@ -23,3 +23,15 @@ gcloud container clusters create yugabytedb-osa \
 --machine-type=n1-standard-8 \
 --num-nodes 1 \
 --zone asia-northeast2-a
+
+
+## Create storage class for each zone
+##      kubectl apply -f [storage yaml file] --context [context name]
+
+kubectl apply -f storage-asia-southeast1-c.yml --context gke_yugabytedb-sg
+
+kubectl apply -f storage-australia-southeast1-b.yml --context gke_yugabytedb-au
+
+kubectl apply -f storage-asia-northeast1-a.yml --context gke_yugabytedb-tyo
+
+kubectl apply -f storage-asia-northeast2-a.yml --context gke_yugabytedb-osa
