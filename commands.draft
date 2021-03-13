@@ -1,37 +1,164 @@
-## Create GKE clusters
-##      gcloud container clusters create [cluster's name] \
+##  3.1b) Create GKE clusters
+##      gcloud container clusters create [gke cluster name] \
 ##      --machine-type=[size for GKE's nodes VM] \
 ##      --num-nodes 1 \
-##      --zone [GCP's zone]
+##      --zone [zone]
 
-gcloud container clusters create yugabytedb-sg \
+gcloud container clusters create yugabytedb-asia-se1c \
 --machine-type=n1-standard-8 \
 --num-nodes 1 \
 --zone asia-southeast1-c
 
-gcloud container clusters create yugabytedb-au \
+gcloud container clusters create yugabytedb-aus-se1b \
 --machine-type=n1-standard-8 \
 --num-nodes 1 \
 --zone australia-southeast1-b
 
-gcloud container clusters create yugabytedb-tyo \
+gcloud container clusters create yugabytedb-asia-ne1a \
 --machine-type=n1-standard-8 \
 --num-nodes 1 \
 --zone asia-northeast1-a
 
-gcloud container clusters create yugabytedb-osa \
+gcloud container clusters create yugabytedb-asia-ne2a \
 --machine-type=n1-standard-8 \
 --num-nodes 1 \
 --zone asia-northeast2-a
 
 
-## Create storage class for each zone
+##  3.4 b) Create storage class for each zone
 ##      kubectl apply -f [storage yaml file] --context [context name]
 
-kubectl apply -f storage-asia-southeast1-c.yml --context gke_yugabytedb-sg
+kubectl apply -f storage-asia-southeast1-c.yml --context gke-yugabytedb-asia-se1c && \
+kubectl apply -f storage-australia-southeast1-b.yml --context gke-yugabytedb-aus-se1b && \
+kubectl apply -f storage-asia-northeast1-a.yml --context gke-yugabytedb-asia-ne1a && \
+kubectl apply -f storage-asia-northeast2-a.yml --context gke-yugabytedb-asia-ne2a
 
-kubectl apply -f storage-australia-southeast1-b.yml --context gke_yugabytedb-au
 
-kubectl apply -f storage-asia-northeast1-a.yml --context gke_yugabytedb-tyo
+##  3.5) Get storage classes
+##      kubectl get sc --context [context name]
 
-kubectl apply -f storage-asia-northeast2-a.yml --context gke_yugabytedb-osa
+kubectl get sc --context gke-yugabytedb-asia-se1c && \
+kubectl get sc --context gke-yugabytedb-aus-se1b && \
+kubectl get sc --context gke-yugabytedb-asia-ne1a && \
+kubectl get sc --context gke-yugabytedb-asia-ne2a
+
+
+##  3.6) Cleanup GKE clusters
+##      kubectl delete -f [storage yaml file] --context [context name]
+##      gcloud container clusters delete [gke cluster name] --zone [zone]
+##      kubectl config delete-context [context name]
+
+kubectl delete -f storage-asia-southeast1-c.yml --context gke-yugabytedb-asia-se1c && \
+kubectl delete -f storage-australia-southeast1-b.yml --context gke-yugabytedb-aus-se1b && \
+kubectl delete -f storage-asia-northeast1-a.yml --context gke-yugabytedb-asia-ne1a && \
+kubectl delete -f storage-asia-northeast2-a.yml --context gke-yugabytedb-asia-ne2a
+
+gcloud container clusters delete yugabytedb-asia-se1c --zone asia-southeast1-c && \
+gcloud container clusters delete yugabytedb-aus-se1b --zone australia-southeast1-b && \
+gcloud container clusters delete yugabytedb-asia-ne1a --zone asia-northeast1-a && \
+gcloud container clusters delete yugabytedb-asia-ne2a --zone asia-northeast2-a
+
+kubectl config delete-context gke-yugabytedb-asia-se1c && \
+kubectl config delete-context gke-yugabytedb-aus-se1b && \
+kubectl config delete-context gke-yugabytedb-asia-ne1a && \
+kubectl config delete-context gke-yugabytedb-asia-ne2a
+
+
+##  4.2 a) Get created kube-dns-lb load balancers on all clusters
+##      kubectl get svc kube-dns-lb -n kube-system --context [context name]
+
+kubectl get svc kube-dns-lb -n kube-system --context gke-yugabytedb-asia-se1c && \
+kubectl get svc kube-dns-lb -n kube-system --context gke-yugabytedb-aus-se1b && \
+kubectl get svc kube-dns-lb -n kube-system --context gke-yugabytedb-asia-ne1a && \
+kubectl get svc kube-dns-lb -n kube-system --context gke-yugabytedb-asia-ne2a
+
+
+##  4.3 a) Verfiy all the namespace are created
+##      kubectl get ns [namespace] --context [context name]
+
+kubectl get ns yb-demo-asia-southeast1-c --context gke-yugabytedb-asia-se1c && \
+kubectl get ns yb-demo-australia-southeast1-b --context gke-yugabytedb-aus-se1b && \
+kubectl get ns yb-demo-asia-northeast1-a --context gke-yugabytedb-asia-ne1a && \
+kubectl get ns yb-demo-asia-northeast2-a --context gke-yugabytedb-asia-ne2a
+
+
+##  4.4) Update default namespace for each kubectl contexts\
+##      kubectl config set-context [context name] --namespace [namespace]
+
+kubectl config set-context gke-yugabytedb-asia-se1c --namespace yb-demo-asia-southeast1-c && \
+kubectl config set-context gke-yugabytedb-aus-se1b --namespace yb-demo-australia-southeast1-b && \
+kubectl config set-context gke-yugabytedb-asia-ne1a --namespace yb-demo-asia-northeast1-a && \
+kubectl config set-context gke-yugabytedb-asia-ne2a --namespace yb-demo-asia-northeast2-a
+
+
+##  4.5 a) Describe kube-dns config map
+##      kubectl describe cm kube-dns -n kube-system --context [context name]
+
+kubectl describe cm kube-dns -n kube-system --context gke-yugabytedb-asia-se1c && \
+kubectl describe cm kube-dns -n kube-system --context gke-yugabytedb-aus-se1b && \
+kubectl describe cm kube-dns -n kube-system --context gke-yugabytedb-asia-ne1a && \
+kubectl describe cm kube-dns -n kube-system --context gke-yugabytedb-asia-ne2a
+
+
+##  4.6 a) Check if all the kube-dns pods are in "Running" status
+##      kubectl get po -l k8s-app=kube-dns -n kube-system --context [context name]
+
+kubectl get po -l k8s-app=kube-dns -n kube-system --context gke-yugabytedb-asia-se1c && \
+kubectl get po -l k8s-app=kube-dns -n kube-system --context gke-yugabytedb-aus-se1b && \
+kubectl get po -l k8s-app=kube-dns -n kube-system --context gke-yugabytedb-asia-ne1a && \
+kubectl get po -l k8s-app=kube-dns -n kube-system --context gke-yugabytedb-asia-ne2a
+
+##  4.6 b) Check logs of kube-dns pods for updated stub domain settings
+##      kubectl logs [pod name] -n kube-system -c kubedns --context [context name]
+
+kubectl logs kube-dns-6bd88c9b66-67tn4 -n kube-system  -c kubedns --context gke-yugabytedb-asia-se1c && \
+kubectl logs kube-dns-6bd88c9b66-n8btt -n kube-system -c kubedns --context gke-yugabytedb-aus-se1b && \
+kubectl logs kube-dns-6bd88c9b66-j6p62 -n kube-system -c kubedns --context gke-yugabytedb-asia-ne1a && \
+kubectl logs kube-dns-6bd88c9b66-ttb4f -n kube-system -c kubedns --context gke-yugabytedb-asia-ne2a
+
+
+##  Install Yugabyte using Helm
+##      helm install yb-demo-[region] yugabytedb/yugabyte \
+##      --namespace yb-demo-[region] \
+##      -f helmvalues-[region].yml \
+##      --kube-context [k8s context name] --wait
+
+helm install yb-demo-asia-southeast1-c yugabytedb/yugabyte \
+--namespace yb-demo-asia-southeast1-c \
+-f helmvalues-asia-southeast1-c.yml \
+--kube-context gke-yugabytedb-asia-se1c --wait && \
+helm install yb-demo-australia-southeast1-b yugabytedb/yugabyte \
+--namespace yb-demo-australia-southeast1-b \
+-f helmvalues-australia-southeast1-b.yml \
+--kube-context gke-yugabytedb-aus-se1b --wait && \
+helm install yb-demo-asia-northeast1-a yugabytedb/yugabyte \
+--namespace yb-demo-asia-northeast1-a \
+-f helmvalues-asia-northeast1-a.yml \
+--kube-context gke-yugabytedb-asia-ne1a --wait && \
+helm install yb-demo-asia-northeast2-a yugabytedb/yugabyte \
+--namespace yb-demo-asia-northeast2-a \
+-f helmvalues-asia-northeast2-a.yml \
+--kube-context gke-yugabytedb-asia-ne2a --wait
+
+##  Delete Yugabyte and pvc on all the clusters
+##  kuc [context name] && \
+##  helm delete yb-demo-[region] -n yb-demo-[region] && \
+##  kubectl delete pvc -l app=yb-master && \
+##  kubectl delete pvc -l app=yb-tserver
+
+kuc gke-yugabytedb-asia-se1c && \
+helm delete yb-demo-asia-southeast1-c -n yb-demo-asia-southeast1-c && \
+kubectl delete pvc -l app=yb-master && \
+kubectl delete pvc -l app=yb-tserver && \
+kuc gke-yugabytedb-aus-se1b && \
+helm delete yb-demo-australia-southeast1-b -n yb-demo-australia-southeast1-b && \
+kubectl delete pvc -l app=yb-master && \
+kubectl delete pvc -l app=yb-tserver && \
+kuc gke-yugabytedb-asia-ne1a && \
+helm delete yb-demo-asia-northeast1-a -n yb-demo-asia-northeast1-a && \
+kubectl delete pvc -l app=yb-master && \
+kubectl delete pvc -l app=yb-tserver && \
+kuc gke-yugabytedb-asia-ne2a && \
+helm delete yb-demo-asia-northeast2-a -n yb-demo-asia-northeast2-a && \
+kubectl delete pvc -l app=yb-master && \
+kubectl delete pvc -l app=yb-tserver

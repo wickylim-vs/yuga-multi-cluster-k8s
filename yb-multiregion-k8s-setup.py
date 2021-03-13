@@ -17,10 +17,10 @@ from time import sleep
 
 # Replace the following with your own k8s cluster contexts
 contexts = {
-    'asia-southeast1-c': 'gke_yugabytedb-sg',
-    'australia-southeast1-b': 'gke_yugabytedb-au',
-    'asia-northeast1-a': 'gke_yugabytedb-tyo',
-    'asia-northeast2-a': 'gke_yugabytedb-osa',
+    'asia-southeast1-c': 'gke-yugabytedb-asia-se1c',
+    'australia-southeast1-b': 'gke-yugabytedb-aus-se1b',
+    'asia-northeast1-a': 'gke-yugabytedb-asia-ne1a',
+    'asia-northeast2-a': 'gke-yugabytedb-asia-ne2a',
 }
 
 # Replace the following with your own `zone`: `region` names
@@ -40,9 +40,9 @@ except OSError:
     pass
 
 # Create a load balancer for the DNS pods in each k8s cluster.
-# for zone, context in contexts.items():
-#     check_call(['kubectl', 'create', 'namespace', 'yb-demo-'+zone, '--context', context])
-#     check_call(['kubectl', 'apply', '-f', 'yb-dns-lb.yaml', '--context', context])
+for zone, context in contexts.items():
+    check_call(['kubectl', 'create', 'namespace', 'yb-demo-'+zone, '--context', context])
+    check_call(['kubectl', 'apply', '-f', 'yb-dns-lb.yaml', '--context', context])
 
 # Set up each load balancer to forward DNS requests for zone-scoped namespaces to the
 # relevant cluster's DNS server, using the external IP of the internal load balancers

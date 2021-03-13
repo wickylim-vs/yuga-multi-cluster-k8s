@@ -5,4 +5,4 @@ metadata:
   namespace: kube-system
 data:
   stubDomains: |
-    {"yb-demo-asia-northeast2-a.svc.cluster.local": ["10.174.0.4"], "yb-demo-australia-southeast1-b.svc.cluster.local": ["10.152.0.3"], "yb-demo-asia-southeast1-c.svc.cluster.local": ["10.148.0.7"]}
+    {"yb-demo-asia-northeast2-a.svc.cluster.local": ["10.174.0.7"], "yb-demo-australia-southeast1-b.svc.cluster.local": ["10.152.0.6"], "yb-demo-asia-southeast1-c.svc.cluster.local": ["10.148.0.10"]}
