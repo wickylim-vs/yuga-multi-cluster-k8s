@@ -117,11 +117,11 @@ kubectl logs kube-dns-6bd88c9b66-j6p62 -n kube-system -c kubedns --context gke-y
 kubectl logs kube-dns-6bd88c9b66-ttb4f -n kube-system -c kubedns --context gke-yugabytedb-asia-ne2a
 
 
-##  Install Yugabyte using Helm
-##      helm install yb-demo-[region] yugabytedb/yugabyte \
-##      --namespace yb-demo-[region] \
-##      -f helmvalues-[region].yml \
-##      --kube-context [k8s context name] --wait
+##  5.3) Install Yugabyte using Helm
+##      helm install [new helm repo name] yugabytedb/yugabyte \
+##      --namespace [namespace] \
+##      -f helmvalues-[zone].yml \
+##      --kube-context [kubectl context name] --wait
 
 helm install yb-demo-asia-southeast1-c yugabytedb/yugabyte \
 --namespace yb-demo-asia-southeast1-c \
@@ -140,11 +140,21 @@ helm install yb-demo-asia-northeast2-a yugabytedb/yugabyte \
 -f helmvalues-asia-northeast2-a.yml \
 --kube-context gke-yugabytedb-asia-ne2a --wait
 
-##  Delete Yugabyte and pvc on all the clusters
-##  kuc [context name] && \
-##  helm delete yb-demo-[region] -n yb-demo-[region] && \
-##  kubectl delete pvc -l app=yb-master && \
-##  kubectl delete pvc -l app=yb-tserver
+
+##  5.4) Check the status of deployed nodes
+##      kubectl get all --context [context name]
+
+kga --context gke-yugabytedb-asia-se1c
+kga --context gke-yugabytedb-aus-se1b
+kga --context gke-yugabytedb-asia-ne1a
+kga --context gke-yugabytedb-asia-ne2a
+
+
+##  5.6) Delete Yugabyte and pvc on all the clusters
+##      kuc [context name] && \
+##      helm delete [helm repo name] -n [namespace] && \
+##      kubectl delete pvc -l app=yb-master && \
+##      kubectl delete pvc -l app=yb-tserver
 
 kuc gke-yugabytedb-asia-se1c && \
 helm delete yb-demo-asia-southeast1-c -n yb-demo-asia-southeast1-c && \

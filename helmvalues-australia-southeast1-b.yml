@@ -1,0 +1,28 @@
+isMultiAz: True
+
+AZ: australia-southeast1-b
+
+masterAddresses: "yb-master-0.yb-masters.yb-demo-asia-southeast1-c.svc.cluster.local:7100, yb-master-0.yb-masters.yb-demo-australia-southeast1-b.svc.cluster.local:7100, yb-master-0.yb-masters.yb-demo-asia-northeast1-a.svc.cluster.local:7100"
+
+storage:
+  master:
+    storageClass: "standard-australia-southeast1-b"
+  tserver:
+    storageClass: "standard-australia-southeast1-b"
+
+replicas:
+  master: 1
+  tserver: 1
+  totalMasters: 3
+
+gflags:
+  master:
+    placement_cloud: "gke"
+    placement_region: "australia-southeast1"
+    placement_zone: "australia-southeast1-b"
+    leader_failure_max_missed_heartbeat_periods: 10
+  tserver:
+    placement_cloud: "gke"
+    placement_region: "australia-southeast1"
+    placement_zone: "australia-southeast1-b"
+    leader_failure_max_missed_heartbeat_periods: 10
